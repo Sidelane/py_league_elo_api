@@ -9,7 +9,7 @@ def get_elo(region, username):
     summoner = Summoner(username, region)
 
     if summoner.unranked == True:
-        return "Unranked"
+        return f"Summoner: {summoner.name} || Elo: Unranked"
     else:
         return f"Summoner: {summoner.name} || Elo: {summoner.tier} {summoner.leaguepoints}"
 
@@ -19,7 +19,7 @@ def get_wr(region, username):
     summoner = Summoner(username, region)
 
     if summoner.unranked == True:
-        return "Unranked"
+        return f"Summoner: {summoner.name} || Elo: Unranked"
     else:
         return f"Summoner: {summoner.name} || {summoner.wins} {summoner.losses} - {summoner.winratio}"
 
@@ -29,7 +29,7 @@ def get_full(region, username):
     summoner = Summoner(username, region)
 
     if summoner.unranked == True:
-        return f"Unranked"
+        return f"Summoner: {summoner.name} || Elo: Unranked"
     else:
         return f"Summoner: {summoner.name} || Elo: {summoner.tier} {summoner.leaguepoints} -- {summoner.wins} {summoner.losses} - {summoner.winratio}"
 
