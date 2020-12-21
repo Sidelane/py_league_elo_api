@@ -11,9 +11,9 @@ def get_elo(region, username):
     if summoner.unranked == True:
         return f"Summoner: {summoner.summoner_name} || Elo: Unranked"
     elif summoner.promo == True:
-        return f"Summoner: {summoner.summoner_name} || Elo: {summoner.tier} {summoner.leaguePoints}LP Promo: {summoner.promoWins}-{summoner.promoLosses}"
+        return f"Summoner: {summoner.summoner_name} || Elo: {summoner.tier} {summoner.rank} {summoner.leaguePoints}LP Promo: {summoner.promoWins}-{summoner.promoLosses}"
     else:
-        return f"Summoner: {summoner.summoner_name} || Elo: {summoner.tier} {summoner.leaguePoints}LP"
+        return f"Summoner: {summoner.summoner_name} || Elo: {summoner.tier} {summoner.rank} {summoner.leaguePoints}LP"
 
 @app.route('/get_wr/<region>/<username>')
 def get_wr(region, username):
@@ -33,9 +33,9 @@ def get_full(region, username):
     if summoner.unranked == True:
         return f"Summoner: {summoner.summoner_name} || Elo: Unranked"
     elif summoner.promo == True:
-        return f"Summoner: {summoner.summoner_name} || Elo: {summoner.tier} {summoner.leaguePoints}LP Promo: {summoner.promoWins}-{summoner.promoLosses} -- {summoner.wins}W {summoner.losses}L - {summoner.winrate}%"
+        return f"Summoner: {summoner.summoner_name} || Elo: {summoner.tier} {summoner.rank} {summoner.leaguePoints}LP Promo: {summoner.promoWins}-{summoner.promoLosses} -- {summoner.wins}W {summoner.losses}L - {summoner.winrate}%"
     else:
-        return f"Summoner: {summoner.summoner_name} || Elo: {summoner.tier} {summoner.leaguePoints}LP -- {summoner.wins}W {summoner.losses}L - {summoner.winrate}%"
+        return f"Summoner: {summoner.summoner_name} || Elo: {summoner.tier} {summoner.rank} {summoner.leaguePoints}LP -- {summoner.wins}W {summoner.losses}L - {summoner.winrate}%"
 
 @app.route('/json/get_full/<region>/<username>')
 def json_get_full(region, username):
@@ -52,6 +52,7 @@ def json_get_full(region, username):
             summoner = summoner.summoner_name,
             region = summoner.region,
             tier = summoner.tier,
+            rank = summoner.rank,
             leaguePoints = summoner.leaguePoints,
             wins = summoner.wins,
             losses = summoner.losses,
@@ -65,6 +66,7 @@ def json_get_full(region, username):
             summoner = summoner.summoner_name,
             region = summoner.region,
             tier = summoner.tier,
+            rank = summoner.rank,
             leaguePoints = summoner.leaguePoints,
             wins = summoner.wins,
             losses = summoner.losses,
