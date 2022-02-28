@@ -9,6 +9,12 @@ app = FastAPI()
 async def get_elo(region: str = "euw", name: str = None):
     summoner = Summoner(region, name)
 
+    if summoner == None:
+        return Response(content="Region not Found", status_code=501)
+
+    if summoner.id == None:
+        return Response(content=f"Summoner: {summoner.summoner_name} on {summoner.region} not found.", status_code=404)
+
     if summoner.unranked == True:
         res = f"Summoner: {summoner.summoner_name} || Elo: Unranked"
     elif summoner.promo == True:
