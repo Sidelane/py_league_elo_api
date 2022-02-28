@@ -1,58 +1,19 @@
-from modules.summoner import Summoner
-from flask import Flask, jsonify
+from Summoner import Summoner
+from fastapi import FastAPI, Response
 
-app = Flask(__name__)
 
-@app.route('/get_elo/<region>/<username>')
-def get_elo(region, username):
+app = FastAPI()
 
-    summoner = Summoner(username, region)
 
-    if summoner.unranked == True:
-        return "Unranked"
-    else:
-        return f"Summoner: {summoner.name} || Elo: {summoner.tier} {summoner.leaguepoints}"
-
-@app.route('/get_wr/<region>/<username>')
-def get_wr(region, username):
-
-    summoner = Summoner(username, region)
+@app.get("/")
+async def get_elo(region: str = "euw", name: str = None):
+    summoner = Summoner(region, name)
 
     if summoner.unranked == True:
-        return "Unranked"
+        res = f"Summoner: {summoner.summoner_name} || Elo: Unranked"
+    elif summoner.promo == True:
+        res = f"Summoner: {summoner.summoner_name} || Elo: {summoner.tier} {summoner.rank} {summoner.leaguePoints}LP Promo: {summoner.promoWins}-{summoner.promoLosses} -- {summoner.wins}W {summoner.losses}L - {summoner.winrate}%"
     else:
-        return f"Summoner: {summoner.name} || {summoner.wins} {summoner.losses} - {summoner.winratio}"
+        res = f"Summoner: {summoner.summoner_name} || Elo: {summoner.tier} {summoner.rank} {summoner.leaguePoints}LP -- {summoner.wins}W {summoner.losses}L - {summoner.winrate}%"
 
-@app.route('/get_full/<region>/<username>')
-def get_full(region, username):
-
-    summoner = Summoner(username, region)
-
-    if summoner.unranked == True:
-        return f"Unranked"
-    else:
-        return f"Summoner: {summoner.name} || Elo: {summoner.tier} {summoner.leaguepoints} -- {summoner.wins} {summoner.losses} - {summoner.winratio}"
-
-@app.route('/json/get_full/<region>/<username>')
-def json_get_full(region, username):
-    
-    summoner = Summoner(username, region)
-
-    if summoner.unranked == True:
-        return jsonify(
-            summoner = summoner.name,
-            unranked = summoner.unranked
-        )
-    else:
-        return jsonify(
-            summoner = summoner.name,
-            region = summoner.region,
-            tier = summoner.tier,
-            lp = summoner.leaguepoints[:-3],
-            wins = summoner.wins[:-1],
-            losses = summoner.losses[:-1],
-            winratio = summoner.winratio[10:][:-1]
-        )
-
-if __name__ == '__main__':
-    app.run(host="0.0.0.0", port="5000")
+    return Response(content=res, status_code=200)
