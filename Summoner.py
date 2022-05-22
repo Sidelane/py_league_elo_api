@@ -1,48 +1,46 @@
 import requests
 import json
+
 from sys import exit
+from pydantic import BaseModel, root_validator
 
 
-class Summoner:
+class Summoner(BaseModel):
+    _headers = {"X-Riot-Token": "Your API Token"}
+    _regions = {"euw": "euw1", "na": "na1", "eune": "eun1", "br": "br1", "jp": "jp1", "kr": "kr", "oce": "oc1", "ru": "ru", "tr": "tr1"}
+    _id_api = "lol/summoner/v4/summoners/by-name"
+    _sum_api = "lol/league/v4/entries/by-summoner"
 
-    headers = {"X-Riot-Token": "Your API Token"}
+    region: str
+    summoner_name: str
 
-    regions = {"euw": "euw1", "na": "na1", "eune": "eun1", "br": "br1", "jp": "jp1", "kr": "kr", "oce": "oc1", "ru": "ru", "tr": "tr1"}
+    id: int = None
+    accountId: int = None
+    puuid: int = None
+    unranked: bool = False
+    tier: str = None
+    rank: str = None
+    leaguePoints: int = None
+    wins: int = None
+    losses: int = None
+    winrate: int = None
+    promo: bool = False
+    promoWins: int = None
+    promoLosses: int = None
 
-    id_api = "lol/summoner/v4/summoners/by-name"
-    sum_api = "lol/league/v4/entries/by-summoner"
+    @root_validator(pre=True)
+    def validate(cls, values):
+        assert values.get("region") in cls._regions
+        return values
 
-    def __init__(self, region, summoner_name):
-
-        if region not in self.regions.keys():
-            return None
-
-        self.region = region
-        self.summoner_name = summoner_name
-
-        self.id = None
-        self.accountId = None
-        self.puuid = None
-
-        self.unranked = False
-
-        self.tier = None
-        self.rank = None
-        self.leaguePoints = None
-        self.wins = None
-        self.losses = None
-        self.winrate = None
-
-        self.promo = False
-        self.promoWins = None
-        self.promoLosses = None
-
+    def __init__(self, **data):
+        super().__init__(**data)
         self.fetch_ids()
         self.fetch_rank()
 
     def fetch_ids(self):
         try:
-            res = requests.get(f"https://{self.regions[self.region]}.api.riotgames.com/{self.id_api}/{self.summoner_name}", headers=self.headers)
+            res = requests.get(f"https://{Summoner._regions[self.region]}.api.riotgames.com/{Summoner._id_api}/{self.summoner_name}", headers=Summoner._headers)
             res_json = json.loads(res.text)
             self.id = res_json["id"]
             self.accountId = res_json["accountId"]
@@ -52,7 +50,7 @@ class Summoner:
 
     def fetch_rank(self):
         try:
-            res = requests.get(f"https://{self.regions[self.region]}.api.riotgames.com/{self.sum_api}/{self.id}", headers=self.headers)
+            res = requests.get(f"https://{Summoner._regions[self.region]}.api.riotgames.com/{Summoner._sum_api}/{self.id}", headers=Summoner._headers)
             res_json = json.loads(res.text)
 
             if res_json == []:
